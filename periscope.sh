@@ -8,7 +8,6 @@
 # Set the configuration directory to the directory where this script is located.
 CONFIG_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CONFIG_FILE="${CONFIG_DIR}/config.txt"
-SCHEDULER_SCRIPT_PATH="${CONFIG_DIR}/slurm_script.sh" # Assumes the remote script is stored here
 
 # Variables that must be present in the config file
 REQUIRED_VARS=(
@@ -21,6 +20,7 @@ REQUIRED_VARS=(
     TUNNEL_HOST_NAME 
     SLURM_JOB_NAME 
     LOG_OUTPUT_PATH
+    SCHEDULER_SCRIPT_PATH
 )
 
 # --- Function Definitions ---
@@ -113,7 +113,7 @@ function run_config_prompts() {
     echo "TUNNEL_HOST_NAME=jhpce-vscode-tunnel" >> "${CONFIG_FILE}"
     echo "SLURM_JOB_NAME=vscode-tunnel-job" >> "${CONFIG_FILE}"
     echo "LOG_OUTPUT_PATH=${REMOTE_WORKSPACE_PATH}/.periscope/logs/%x-%j.log" >> "${CONFIG_FILE}"
-
+    echo "SCHEDULER_SCRIPT_PATH=${CONFIG_DIR}/scheduler_scripts/slurm_script.sh" >> "${CONFIG_FILE}"
     echo "✅ Configuration saved to ${CONFIG_FILE}"
 }
 
