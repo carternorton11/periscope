@@ -54,7 +54,7 @@ function run_config_prompts() {
 
     # Get remote workspace path
     while true; do
-        read -p "Enter your remote workspace path (e.g., /dcs07/scharpf/data/cnorton): " REMOTE_WORKSPACE_PATH
+        read -p "Enter your remote workspace path (e.g., /dcs07/bill/data): " REMOTE_WORKSPACE_PATH
         read -p "Is '${REMOTE_WORKSPACE_PATH}' correct? [y/n] " -n 1 -r; echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then break; fi
     done
