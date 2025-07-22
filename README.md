@@ -28,7 +28,7 @@ To run this tool, clone this repo, and then run:
 
 1. periscope will generate a config.txt file in its own directory
 2. periscope will test your ssh connection
-3. once the config.txt file is generated and ssh connection works,  `bash periscope.sh` will automatically open a compute job, and run a vscode server on that job
+3. once the config.txt file is generated and ssh connection works,  `bash periscope.sh` will automatically open a compute job, and open a vscode server on that job
 
 
 
