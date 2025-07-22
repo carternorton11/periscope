@@ -17,3 +17,20 @@
 ~                                                         888              ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
+
+Periscope is a simple tool for opening a vscode server on a compute node of a SLURM HPC. 
+It requires:
+1. SSH keys to be set up between your local computer and HPC
+2. vscode to be installed locally, with Remote-SSH extension
+
+To run this tool, clone this repo, and then run:
+`bash periscope.sh`
+
+1. periscope will generate a config.txt file in its own directory
+2. periscope will test your ssh connection
+3. once the config.txt file is generated and ssh connection works,  `bash periscope.sh` will automatically open a compute job, and run a vscode server on that job
+
+
+
+
+
