@@ -180,7 +180,6 @@ Host %s
     IdentitiesOnly yes
     StrictHostKeyChecking no
     ForwardX11 yes
-    UseKeychain yes
 ### Periscope VSCode Tunnel End ###
 EOF
 )
