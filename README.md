@@ -15,7 +15,7 @@
                                                          888              
                                                          888              
                                                          888              
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ```
 
 Periscope is a simple tool for opening a vscode session on a compute node of a SLURM HPC. 
