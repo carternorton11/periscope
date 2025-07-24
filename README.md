@@ -25,16 +25,14 @@ It requires:
 3. a mac, for now
 4. a HPC that uses SLURM for job scheduling, for now
 
-To run this tool, clone this repo, and then run:
-`bash periscope.sh`
-
-Periscope will:
+To run this tool, clone this repo, and then run: `bash periscope.sh`
+Periscope will then:
 1. generate a config.txt file in its own directory
 2. update your .ssh/config to include a specific block for vscode tunnel
 3. test your ssh connection
 4. open a compute job and run vscode session on that job
 
-Once config is complete, `bash periscope.sh` will directly open a compute job on HPC and open a vscode session there
+Once initial config is complete, running `bash periscope.sh` will directly open a compute job on HPC and open a vscode session there
 
 
 
