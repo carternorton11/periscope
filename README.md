@@ -23,6 +23,7 @@ It requires:
 1. SSH keys to be set up between your local computer and HPC
 2. vscode to be installed locally, with Remote-SSH extension
 3. a mac, for now
+4. a HPC that uses SLURM for job scheduling, for now
 
 To run this tool, clone this repo, and then run:
 `bash periscope.sh`
