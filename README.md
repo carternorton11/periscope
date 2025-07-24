@@ -30,7 +30,7 @@ To run this tool, clone this repo, and then run:
 
 Periscope will:
 1. generate a config.txt file in its own directory
-2. update your ssh/config to include a specific block for vscode tunnel
+2. update your .ssh/config to include a specific block for vscode tunnel
 3. test your ssh connection
 4. open a compute job and run vscode session on that job
 
