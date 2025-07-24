@@ -30,7 +30,8 @@ Periscope will then:
 1. generate a config.txt file in its own directory
 2. update your .ssh/config to include a specific block for vscode tunnel
 3. test your ssh connection
-4. open a compute job and run vscode session on that job
+4. open a compute job and open a port with `sshd`
+5. automatically connect vscode remote-ssh to that compute job via that port
 
 Once initial config is complete, running `bash periscope.sh` will directly open a compute job on HPC and open a vscode session there
 
