@@ -23,7 +23,7 @@ JOB_ID=$(sbatch --parsable \
     --ntasks-per-node=1 \
     --cpus-per-task=2 \
     --mem-per-cpu=4G \
-    --partition=cancergen,shared \
+    --partition="${PARTITION}" \
     --time=9:00:00 \
     --output="${LOG_OUTPUT_PATH}" \
     << 'SBATCH_SCRIPT'

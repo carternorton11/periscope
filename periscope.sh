@@ -13,6 +13,7 @@ CONFIG_FILE="${CONFIG_DIR}/config.txt"
 REQUIRED_VARS=(
     HPC_USER
     HPC_LOGIN_NODE
+    PARTITION
     REMOTE_WORKSPACE_PATH
     LOCAL_SSH_KEY
     CLUSTER_SSH_KEY
@@ -45,6 +46,11 @@ HPC_USER=
 # The address of the HPC login node.
 # Example: HPC_LOGIN_NODE=jhpce01.jhsph.edu
 HPC_LOGIN_NODE=
+
+# The SLURM partition to use for the tunnel job.
+# This is typically a compute partition.
+# Example: PARTITION=shared
+PARTITION=
 
 # The absolute path to your desired workspace directory on the HPC.
 # This is where VS Code will open.
@@ -282,6 +288,7 @@ function run_tunnel_and_launch() {
     ssh -i "${local_ssh_key_expanded}" "${HPC_USER}@${HPC_LOGIN_NODE}" \
         "SLURM_JOB_NAME='${SLURM_JOB_NAME}' \
          HPC_USER='${HPC_USER}' \
+         PARTITION='${PARTITION}' \
          LOG_OUTPUT_PATH='${LOG_OUTPUT_PATH}' \
          TUNNEL_PORT='${TUNNEL_PORT}' \
          CLUSTER_SSH_KEY='${CLUSTER_SSH_KEY}' \
