@@ -162,7 +162,37 @@ function run_post_config_checks() {
     fi
     echo "✅ Cluster-side key verified."
 
-    # 3. Create remote log directory
+    # 3. Check if cluster-side public key is in authorized_keys
+    echo "Verifying cluster-side key is authorized for SSH..."
+    # This command gets the public key from the private key file and checks if it's in authorized_keys
+    if ! ssh -i "${LOCAL_SSH_KEY_EXPANDED}" "${HPC_USER}@${HPC_LOGIN_NODE}" \
+        "PUB_KEY=\$(ssh-keygen -y -f ${CLUSTER_SSH_KEY}) && grep -q -F -- \"\$PUB_KEY\" ~/.ssh/authorized_keys"; then
+        
+        echo "⚠️ The public key for '${CLUSTER_SSH_KEY}' is not in your ~/.ssh/authorized_keys file on the cluster."
+        echo "This is required for the compute node to SSH back to the login node."
+        read -p "Type 'y' to automatically add it: " -r
+        echo # move to a new line
+
+        if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+            echo "Adding public key to authorized_keys on the cluster..."
+            # This command ensures the .ssh dir exists, then appends the public key to authorized_keys
+            if ssh -i "${LOCAL_SSH_KEY_EXPANDED}" "${HPC_USER}@${HPC_LOGIN_NODE}" \
+                "mkdir -p ~/.ssh && chmod 700 ~/.ssh && ssh-keygen -y -f ${CLUSTER_SSH_KEY} >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"; then
+                echo "✅ Public key added successfully."
+            else
+                echo "❌ Failed to add the public key automatically."
+                echo "Please add the public key from '${CLUSTER_SSH_KEY}.pub' to your '~/.ssh/authorized_keys' file on the cluster manually."
+                exit 1
+            fi
+        else
+            echo "Aborting. Please add the public key from '${CLUSTER_SSH_KEY}.pub' to your '~/.ssh/authorized_keys' file on the cluster and run the script again."
+            exit 1
+        fi
+    else
+        echo "✅ Cluster-side key is authorized."
+    fi
+
+    # 4. Create remote log directory
     # The variable LOG_OUTPUT_PATH contains placeholders like %x, so we get the directory part.
     local log_dir
     log_dir=$(dirname "${LOG_OUTPUT_PATH}")
@@ -171,7 +201,7 @@ function run_post_config_checks() {
     echo "✅ Remote log directory is ready."
 }
 
-# Validates the necessary SSH configuration block in ~/.ssh/config.
+# Validates and manages the necessary SSH configuration block in ~/.ssh/config.
 function manage_ssh_config() {
     echo "--- Checking Local SSH Configuration ---"
     local ssh_config_dir="${HOME}/.ssh"
@@ -206,19 +236,22 @@ EOF
         "${local_ssh_key_expanded}"
 )
 
-    # Ensure the config directory exists.
+    # Ensure the config directory and file exist.
     mkdir -p "${ssh_config_dir}"
+    touch "${ssh_config_file}"
 
-    if [[ ! -f "${ssh_config_file}" ]]; then
-        echo "❌ SSH config file not found at '${ssh_config_file}'." >&2
-        echo "Please create the file and add the following block, then run this script again:" >&2
-        echo "----------------------------------------------------"
-        echo "${desired_block}"
-        echo "----------------------------------------------------"
+    # Check for a conflicting, unmanaged host entry first. This is a hard stop.
+    if ! grep -q "### Periscope VSCode Tunnel Start ###" "${ssh_config_file}" && grep -q -E "^\s*Host\s+${TUNNEL_HOST_NAME}\s*$" "${ssh_config_file}"; then
+        echo "❌ ERROR: A conflicting, unmanaged SSH config for '${TUNNEL_HOST_NAME}' already exists." >&2
+        echo "Please remove or rename that entry in '${ssh_config_file}' and run this script again." >&2
         exit 1
     fi
 
+    local needs_update=0
+    local action_message=""
+
     if grep -q "### Periscope VSCode Tunnel Start ###" "${ssh_config_file}"; then
+        # Block exists, check if it's correct
         local existing_block
         existing_block=$(sed -n '/### Periscope VSCode Tunnel Start ###/,/### Periscope VSCode Tunnel End ###/p' "${ssh_config_file}")
 
@@ -228,33 +261,40 @@ EOF
         existing_block_cleaned=$(echo "$existing_block" | tr -s '[:space:]' ' ')
         desired_block_cleaned=$(echo "$desired_block" | tr -s '[:space:]' ' ')
 
-        if [[ "$existing_block_cleaned" == "$desired_block_cleaned" ]]; then
+        if [[ "$existing_block_cleaned" != "$desired_block_cleaned" ]]; then
+            needs_update=1
+            action_message="Your existing Periscope SSH config block is outdated and needs to be replaced."
+        else
             echo "✅ SSH config is already up-to-date."
             return 0
+        fi
+    else
+        # Block does not exist
+        needs_update=1
+        action_message="The Periscope SSH config block is missing and needs to be added."
+    fi
+
+    if [[ $needs_update -eq 1 ]]; then
+        echo "${action_message}"
+        echo "The following block will be configured in '${ssh_config_file}':"
+        echo "----------------------------------------------------"
+        echo "${desired_block}"
+        echo "----------------------------------------------------"
+        read -p "Type 'y' to apply this change: " -r
+        echo # move to a new line
+
+        if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+            # If an old block exists, remove it. Use a temp file for safety.
+            sed '/### Periscope VSCode Tunnel Start ###/,/### Periscope VSCode Tunnel End ###/d' "${ssh_config_file}" > "${ssh_config_file}.tmp"
+            mv "${ssh_config_file}.tmp" "${ssh_config_file}"
+
+            # Append the new block
+            echo -e "\n${desired_block}" >> "${ssh_config_file}"
+            echo "✅ SSH config has been updated."
         else
-            echo "❌ Your existing Periscope SSH config block is outdated." >&2
-            echo "Please replace the existing block in '${ssh_config_file}' with this one:" >&2
-            echo "----------------------------------------------------"
-            echo "${desired_block}"
-            echo "----------------------------------------------------"
+            echo "Aborting. Please manually update your SSH config and run the script again."
             exit 1
         fi
-
-    elif grep -q -E "^\s*Host\s+${TUNNEL_HOST_NAME}\s*$" "${ssh_config_file}"; then
-        echo "❌ ERROR: A conflicting, unmanaged SSH config for '${TUNNEL_HOST_NAME}' already exists." >&2
-        echo "Please remove or rename that entry in '${ssh_config_file}' and then add the required block:" >&2
-        echo "----------------------------------------------------"
-        echo "${desired_block}"
-        echo "----------------------------------------------------"
-        exit 1
-
-    else
-        echo "Periscope SSH config block not found in '${ssh_config_file}'." >&2
-        echo "Please add the following block to your SSH config and run this script again:" >&2
-        echo "----------------------------------------------------"
-        echo "${desired_block}"
-        echo "----------------------------------------------------"
-        exit 1
     fi
 }
 

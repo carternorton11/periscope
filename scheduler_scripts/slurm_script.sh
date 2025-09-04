@@ -24,7 +24,7 @@ JOB_ID=$(sbatch --parsable \
     --cpus-per-task=2 \
     --mem-per-cpu=4G \
     --partition="${PARTITION}" \
-    --time=9:00:00 \
+    --time=10:00:00 \
     --output="${LOG_OUTPUT_PATH}" \
     << 'SBATCH_SCRIPT'
 #!/bin/bash
