@@ -22,6 +22,7 @@ REQUIRED_VARS=(
     SLURM_JOB_NAME
     LOG_OUTPUT_PATH
     SCHEDULER_SCRIPT_PATH
+    OS
 )
 
 # --- Function Definitions ---
@@ -72,6 +73,10 @@ CLUSTER_SSH_KEY=
 # A random port between 2000-8000 is suggested.
 # Example: TUNNEL_PORT=4582
 TUNNEL_PORT=
+
+# Your operating system. Must be one of: macOS, windows
+# Example: OS=macOS
+OS=
 
 # --- Pre-filled Variables (Modify only if you know what you are doing) ---
 
@@ -210,7 +215,22 @@ function manage_ssh_config() {
 
     # Define the required format string using a standard here-document.
     local format_string
-    format_string=$(cat <<'EOF'
+    if [[ "$OS" == "windows" ]]; then
+        format_string=$(cat <<'EOF'
+### Periscope VSCode Tunnel Start ###
+Host %s
+    ProxyCommand ssh %s@%s "nc \\$(squeue --me --name=%s --states=R -h -O NodeList) %s"
+    User %s
+    IdentityFile %s
+    IdentitiesOnly yes
+    StrictHostKeyChecking no
+    ForwardX11 yes
+### Periscope VSCode Tunnel End ###
+EOF
+)
+# If on Windows, we omit 'UseKeychain' as it's not applicable.
+    else
+        format_string=$(cat <<'EOF'
 ### Periscope VSCode Tunnel Start ###
 Host %s
     ProxyCommand ssh %s@%s "nc \\$(squeue --me --name=%s --states=R -h -O NodeList) %s"
@@ -223,6 +243,7 @@ Host %s
 ### Periscope VSCode Tunnel End ###
 EOF
 )
+    fi
 
     # Populate the format string using standard printf.
     local desired_block
@@ -311,6 +332,10 @@ function check_prerequisites() {
         echo "❌ Remote script not found at ${SCHEDULER_SCRIPT_PATH}."
         echo "Please ensure the accompanying scheduler script (e.g., slurm_script.sh) is in the correct path."
         exit 1
+    fi
+    # Run sed -i 's/\r$//' on the scheduler script to fix line endings if on Windows
+    if [[ "$OS" == "windows" ]]; then
+        sed -i 's/\r$//' "${SCHEDULER_SCRIPT_PATH}"
     fi
     echo "✅ Prerequisites met."
 }
