@@ -19,7 +19,7 @@
 ```
 ## Periscope
 
-Periscope is a simple script that automates connecting Visual Studio Code to a compute node on a SLURM-based High-Performance Computing (HPC) cluster. It handles the job submission and SSH tunneling for you, getting you coding on a powerful machine in seconds.
+Periscope is a simple script that automates connecting Visual Studio Code to a compute node on a SLURM-based High-Performance Computing (HPC) cluster. It handles the job submission and SSH tunneling for you.
 
 ### Prerequisites
 
