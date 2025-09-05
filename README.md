@@ -17,25 +17,45 @@
                                                          888              
 
 ```
+## Periscope
 
-Periscope is a simple tool for opening a vscode session on a compute node of a SLURM HPC. 
-It requires:
-1. SSH keys to be set up between your local computer and HPC
-2. vscode to be installed locally, along with `Remote-SSH` extension
-3. a mac (for now)
-4. a HPC that uses SLURM for job scheduling (for now)
+Periscope is a simple script that automates connecting Visual Studio Code to a compute node on a SLURM-based High-Performance Computing (HPC) cluster. It handles the job submission and SSH tunneling for you, getting you coding on a powerful machine in seconds.
 
-To run this tool, clone this repo, and then run: `bash periscope.sh`
-Periscope will then:
-1. generate a config.txt file in its own directory and ask you to fill it out
-2. provide you with a config block to add to your .ssh/config
-3. test your ssh connection
-4. open a compute job and open a port with `sshd`
-5. automatically connect vscode remote-ssh to compute job via login node
+### Prerequisites
 
-Once initial config is complete, running `bash periscope.sh` will directly open a compute job on HPC and open a vscode session there
+Before you begin, please ensure you have the following set up:
 
+1.  **Passwordless SSH Access:** You must have SSH keys configured for passwordless login from your local computer to your HPC's login node.
+2.  **Visual Studio Code:** You need VSCode installed locally.
+3.  **Remote - SSH Extension:** You must have the official `Remote - SSH` extension installed in VSCode.
+4.  **SLURM HPC:** This tool is designed for HPCs that use the SLURM job scheduler.
 
+### First-Time Setup
 
+The *first time* you run Periscope, it will walk you through a one-time configuration process.
 
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://your-repo-url/periscope.git
+    cd periscope
+    ```
+
+2.  **Run the Script:**
+    ```bash
+    bash periscope.sh
+    ```
+
+3.  **Follow the On-Screen Instructions:** Periscope will guide you through the following:
+    * **Create `config.txt`:** It will generate a configuration file. You will be prompted to open this file and enter your HPC username, cluster address, and desired compute resources.
+    * **Update SSH Config:** It will provide you with a text block to add to your local SSH config file (usually located at `~/.ssh/config`). This allows VSCode to connect to the compute node through the login node.
+    * **Test Connection:** The script will test your SSH connection to ensure everything is working correctly.
+
+Once these steps are complete, Periscope will automatically submit a job, wait for it to start, and open a VSCode window connected directly to your compute node.
+
+### Everyday Usage
+
+After the one-time setup, just run the script from the Periscope directory:
+
+```bash
+bash periscope.sh
 
