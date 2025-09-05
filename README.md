@@ -21,6 +21,7 @@
 Periscope is a simple script that automates connecting Visual Studio Code to a compute node on a SLURM-based High-Performance Computing (HPC) cluster. It handles the job submission and SSH tunneling for you.
 
 ### Prerequisites
+---
 
 Before you begin, please ensure you have the following set up:
 
@@ -30,6 +31,7 @@ Before you begin, please ensure you have the following set up:
 4.  **SLURM HPC:** This tool is designed for HPCs that use the SLURM job scheduler.
 
 ### First-Time Setup
+---
 
 The first time you run Periscope, it will walk you through a one-time configuration process.
 
@@ -52,6 +54,7 @@ The first time you run Periscope, it will walk you through a one-time configurat
 Once these steps are complete, Periscope will automatically submit a job, wait for it to start, and open a VSCode window connected directly to your compute node.
 
 ### Everyday Usage
+---
 
 After the one-time setup, just run the script from the Periscope directory:
 
