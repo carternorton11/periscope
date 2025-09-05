@@ -37,7 +37,7 @@ The first time you run Periscope, it will walk you through a one-time configurat
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://your-repo-url/periscope.git
+    git clone https://github.com/carternorton11/periscope.git
     cd periscope
     ```
 
