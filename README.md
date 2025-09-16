@@ -25,7 +25,7 @@ Periscope is a simple script that automates connecting Visual Studio Code to a c
 
 Before you begin, please ensure you have the following set up:
 
-1.  **Passwordless SSH Access:** You must have SSH keys configured for passwordless login from your local computer to your HPC's login node.
+1.  **SSH Access:** You must have SSH keys configured for passwordless login from your local computer to your HPC's login node.
 2.  **Visual Studio Code:** You need VSCode installed locally.
 3.  **Remote - SSH Extension:** You must have the official `Remote - SSH` extension installed in VSCode.
 4.  **SLURM HPC:** This tool is designed for HPCs that use the SLURM job scheduler.
@@ -48,7 +48,7 @@ The first time you run Periscope, it will walk you through a one-time configurat
 
 3.  **Follow the On-Screen Instructions:** Periscope will guide you through the following:
     * **Create `config.txt`:** It will generate a configuration file. You will be prompted to open this file and enter your HPC username, cluster address, and desired compute resources.
-    * **Update SSH Config:** It will provide you with a text block to add to your local SSH config file (usually located at `~/.ssh/config`). This allows VSCode to connect to the compute node through the login node.
+    * **Update SSH Config:** It will provide you with a text block to add to your local SSH config file (usually located at `~/.ssh/config`). This allows VSCode to 'tunnel' to the compute node through the login node.
     * **Test Connection:** The script will test your SSH connection to ensure everything is working correctly.
 
 Once these steps are complete, Periscope will automatically submit a job, wait for it to start, and open a VSCode window connected directly to your compute node.
