@@ -58,11 +58,11 @@ Once these steps are complete, Periscope will automatically submit a job, wait f
 
 After the one-time setup, just run the script from the Periscope directory:
 
-```bash
+```
 bash periscope.sh
-
+```
 ### Tips to Avoid Lingering Processes
 ---
 If you find that you are leaving orphaned processes after closing your remote session, try removing your tunnel-stable.lock.
-rm ~/.vscode/cli/tunnel-stable.lock
+```rm ~/.vscode/cli/tunnel-stable.lock```
 
