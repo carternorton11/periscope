@@ -14,9 +14,9 @@ function cleanup_node() {
     echo "   -> 🧹 Connecting to $node to kill orphaned VS Code processes..."
     # 1. 'vscode-server' & 'vscode-ipc': Standard remote server processes (match full command line)
     # 2. 'code': The binary itself (match EXACT name only to avoid killing scripts like 'my_code.py')
-    ssh -o StrictHostKeyChecking=no -i "${CLUSTER_SSH_KEY}" "$node" \
-        "pkill -u \$(whoami) -f 'vscode-server' || true; \
-         pkill -u \$(whoami) -f 'vscode-ipc' || true; \
+    ssh -T -n -o StrictHostKeyChecking=no -i "${CLUSTER_SSH_KEY}" "$node" \
+        "pkill -u \$(whoami) -f '[v]scode-server' || true; \
+         pkill -u \$(whoami) -f '[v]scode-ipc' || true; \
          pkill -u \$(whoami) -x 'code' || true" \
         || echo "      (Warning: Failed to connect to $node for cleanup. Skipping.)"
 }
@@ -34,6 +34,7 @@ if [[ -n "$OLD_JOBS" ]]; then
         # 2. Attempt to clean up processes on that node BEFORE cancelling
         if [[ -n "$JOB_NODE" && "$JOB_NODE" != "Nodes_not_assigned" ]]; then
             cleanup_node "$JOB_NODE"
+            sleep 1
         fi
 
         # 3. Cancel the job
@@ -42,7 +43,7 @@ if [[ -n "$OLD_JOBS" ]]; then
     done
     
     echo "   -> 💤 Waiting for scheduler to process cancellations..."
-    sleep 3 
+    sleep 2
 else
     echo "   -> No old tunnel jobs found."
 fi
