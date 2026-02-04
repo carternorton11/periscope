@@ -50,8 +50,8 @@ fi
 # --- Shared Filesystem Cleanup ---
 # Removes specific lock files that block reconnection
 echo "🧹 Cleaning up stale lock files in ~/.vscode-server..."
-find ~/.vscode-server -name "*lock*" -delete 2>/dev/null || true
-find ~/.vscode-server -name "SingletonLock*" -delete 2>/dev/null || true
+sleep 2
+find ~/.vscode-server -maxdepth 2 -name "*lock*" -delete 2>/dev/null || true
 
 echo "🚀 Submitting new tunnel job to Slurm..."
 
@@ -88,7 +88,7 @@ cleanup_handler() {
     pkill -u $(whoami) -x "code" || true
     
     # Clear locks
-    find ~/.vscode-server -name "*lock*" -delete 2>/dev/null || true
+    find ~/.vscode-server -maxdepth 2 -name "*lock*" -delete 2>/dev/null || true
     exit 0
 }
 
